@@ -99,7 +99,7 @@ Tests create notes tagged `#temporary` and trash them after each test class, eve
 
 ## Agent integration
 
-`AGENT.md` contains tool-use instructions that any AI agent can consume — it describes every subcommand, its parameters, output format, and common workflows. Point your agent at this file to give it Bear access.
+`AGENTS.md` contains tool-use instructions that any AI agent can consume — it describes every subcommand, its parameters, output format, and common workflows. Point your agent at this file to give it Bear access.
 
 For Claude Code specifically, install as a skill:
 
