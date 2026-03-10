@@ -1,0 +1,12 @@
+# Built xcall-lite app bundle
+scripts/xcall-lite.app/
+
+# Python
+__pycache__/
+*.pyc
+
+# macOS
+.DS_Store
+
+# Packaged skill
+*.skill
