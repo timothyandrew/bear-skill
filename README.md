@@ -1,4 +1,4 @@
-# bear-cli
+# bear-skill
 
 A command-line interface for the [Bear](https://bear.app) macOS note-taking app. Wraps Bear's x-callback-url API into a simple `bear.py` CLI that outputs JSON — suitable for scripting, automation, or as a tool for AI agents.
 
