@@ -1,26 +1,14 @@
-# Bear Skill for Claude Code
+# bear-cli
 
-A [Claude Code](https://docs.anthropic.com/en/docs/claude-code) skill that interfaces with the [Bear](https://bear.app) macOS note-taking app via its x-callback-url API.
-
-## What it does
-
-When installed as a Claude Code skill, Claude can directly read, create, search, and modify your Bear notes through natural conversation. Ask things like:
-
-- "Search my Bear notes for meeting notes"
-- "Create a note in Bear titled Project Plan with these details..."
-- "Append this summary to my Daily Log note"
-- "What tags do I have in Bear?"
-- "Trash the note called Old Draft"
+A command-line interface for the [Bear](https://bear.app) macOS note-taking app. Wraps Bear's x-callback-url API into a simple `bear.py` CLI that outputs JSON — suitable for scripting, automation, or as a tool for AI agents.
 
 ## How it works
 
-Bear exposes an `x-callback-url` API (`bear://x-callback-url/...`), but these callbacks need a registered macOS app to receive responses. This skill bundles:
+Bear exposes an `x-callback-url` API (`bear://x-callback-url/...`), but these callbacks need a registered macOS app to receive responses. This repo bundles:
 
-1. **`xcall-lite`** — A minimal Swift app (~50 lines) that sends a `bear://` URL, captures the callback response, and prints it as JSON to stdout. It registers a `xcall-lite-callback://` URL scheme, runs as a background-only app (no Dock icon), and times out after 30 seconds.
+1. **`xcall-lite`** — A minimal Swift app (~50 lines) that sends a `bear://` URL, captures the callback response, and prints it as JSON to stdout. Runs as a background-only app (no Dock icon), times out after 30 seconds.
 
-2. **`bear.py`** — A Python CLI wrapper (stdlib only) with subcommands for every Bear API action. It builds URLs, handles encoding, injects the API token, and parses responses.
-
-3. **`SKILL.md`** — The skill definition that teaches Claude when and how to use these tools.
+2. **`bear.py`** — A Python CLI (stdlib only, no dependencies) with subcommands for every Bear API action. Handles URL encoding, API token injection, and response parsing.
 
 ## Setup
 
@@ -30,12 +18,11 @@ Bear exposes an `x-callback-url` API (`bear://x-callback-url/...`), but these ca
 - Xcode command-line tools (`xcode-select --install`)
 - Python 3
 
-### Install as a Claude Code skill
-
-Clone into your Claude Code skills directory:
+### Install
 
 ```bash
-git clone https://github.com/timothyandrew/bear-skill.git ~/.claude/skills/bear
+git clone https://github.com/timothyandrew/bear-skill.git
+cd bear-skill
 ```
 
 ### Set your API token
@@ -51,13 +38,10 @@ echo 'export BEAR_API_TOKEN="your-token-here"' >> ~/.zshrc
 This happens automatically on first use, but you can also build manually:
 
 ```bash
-cd ~/.claude/skills/bear
 bash scripts/build-xcall-lite.sh
 ```
 
-## Standalone CLI usage
-
-The `bear.py` script works independently of Claude Code:
+## Usage
 
 ```bash
 export BEAR_API_TOKEN="your-token"
@@ -81,18 +65,7 @@ python3 scripts/bear.py add-text --title "My Note" --text "More content" --mode 
 python3 scripts/bear.py trash --id "NOTE-UUID"
 ```
 
-Run `python3 scripts/bear.py --help` for all subcommands, or `python3 scripts/bear.py <subcommand> --help` for details on each.
-
-## Tests
-
-Integration tests run against a live Bear instance:
-
-```bash
-export BEAR_API_TOKEN="your-token"
-python3 scripts/test_bear.py -v
-```
-
-Tests create notes tagged `#temporary` and trash them after each test class, even on failure.
+Run `python3 scripts/bear.py --help` for all subcommands, or `python3 scripts/bear.py <subcommand> --help` for details.
 
 ## Supported actions
 
@@ -112,3 +85,28 @@ Tests create notes tagged `#temporary` and trash them after each test class, eve
 | `todo`       | Show notes with todo items         |
 | `untagged`   | Show untagged notes                |
 | `grab-url`   | Create a note from a web page URL  |
+
+## Tests
+
+Integration tests run against a live Bear instance:
+
+```bash
+export BEAR_API_TOKEN="your-token"
+python3 scripts/test_bear.py -v
+```
+
+Tests create notes tagged `#temporary` and trash them after each test class, even on failure.
+
+## Agent integration
+
+`AGENT.md` contains tool-use instructions that any AI agent can consume — it describes every subcommand, its parameters, output format, and common workflows. Point your agent at this file to give it Bear access.
+
+For Claude Code specifically, install as a skill:
+
+```bash
+git clone https://github.com/timothyandrew/bear-skill.git ~/.claude/skills/bear
+```
+
+## API reference
+
+See `references/api.md` for the full Bear x-callback-url API with all parameters and return values.
